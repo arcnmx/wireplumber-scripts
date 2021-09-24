@@ -1,5 +1,3 @@
-local _G = {}
-
 -- https://stackoverflow.com/a/36892318
 package = {}
 local preload, loaded = {}, {

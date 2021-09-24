@@ -22,7 +22,7 @@ build/.keep:
 	touch build/.keep
 
 build/%.lua: src/%.lua build/.keep
-	$(AMALG) -o $@ -p $(PREFIX) -s $< $(DEPENDS_$*)
+	$(AMALG) -a -o $@ -p $(PREFIX) -s $< $(DEPENDS_$*)
 
 .PHONY: clean install check
 .DELETE_ON_ERROR:
