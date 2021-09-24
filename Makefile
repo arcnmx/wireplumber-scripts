@@ -14,6 +14,9 @@ clean: $(OUTPUTS)
 install: $(OUTPUTS)
 	install -Dm0644 -t $(INSTALLDIR)/scripts $^
 
+check: $(OUTPUTS)
+	luac -p $^
+
 build/.keep:
 	mkdir -p build
 	touch build/.keep

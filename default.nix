@@ -11,11 +11,13 @@
       sha256 = "1a569hrras5wm4gw5hr2i5hz899bwihz1hb31gfnd9z4dsi8wymb";
     };
     rockspecFilename = "amalg-scm-0.rockspec";
-    #buildInputs = [ lua ];
   };
   shell = mkShell {
     nativeBuildInputs = [ lua lua-amalg ];
   };
+  wireplumber-scripts = callPackage ./derivation.nix (optionalAttrs (! pkgs ? lua-amalg) {
+    inherit lua-amalg;
+  });
 in {
-  inherit lua-amalg shell;
+  inherit lua-amalg wireplumber-scripts shell;
 }
