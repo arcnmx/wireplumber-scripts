@@ -24,5 +24,5 @@ build/.keep:
 build/%.lua: src/%.lua build/.keep
 	$(AMALG) -o $@ -p $(PREFIX) -s $< $(DEPENDS_$*)
 
-.PHONY: clean
+.PHONY: clean install check
 .DELETE_ON_ERROR:
