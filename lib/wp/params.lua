@@ -6,31 +6,31 @@ function Params.new()
 	}
 
 	function self:props()
-		return self.pod["properties"]
+		return self.pod.properties
 	end
 
 	function self:mute(ch)
 		local props = self:props()
-		return props["mute"] or false
+		return props.mute or false
 	end
 
 	function self:channel_volume(ch)
 		local props = self:props()
-		if props["channelVolumes"] ~= nil then
-			return props["channelVolumes"][ch]
+		if props.channelVolumes ~= nil then
+			return props.channelVolumes[ch]
 		else
-			return props["volume"]
+			return props.volume
 		end
 	end
 
 	function self:set_channel_volume(ch, volume)
 		local props = self:props()
-		if props["channelVolumes"] ~= nil then
-			props["channelVolumes"][ch] = volume
-			self.changed_keys["channelVolumes"] = true
+		if props.channelVolumes ~= nil then
+			props.channelVolumes[ch] = volume
+			self.changed_keys.channelVolumes = true
 		else
-			props["volume"] = volume
-			self.changed_keys["volumes"] = true
+			props.volume = volume
+			self.changed_keys.volume = true
 		end
 	end
 

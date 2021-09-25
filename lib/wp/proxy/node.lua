@@ -19,7 +19,7 @@ function ProxyNode.props(node)
 
 	for param in node:iterate_params("Props") do
 		local pod = param:parse()
-		if pod.pod_type == "Object" and pod["properties"]["volume"] ~= nil then
+		if pod.pod_type == "Object" and pod.properties.volume ~= nil then
 			params:set_from_pod(pod)
 		end
 	end

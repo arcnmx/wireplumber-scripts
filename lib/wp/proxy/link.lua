@@ -21,10 +21,10 @@ function ProxyLink.new(output, input, args)
 
 	local set_port_props = function(dir, obj)
 		if Proxy.is_type(Proxy.types.Port, obj) then
-			props[string.format("link.%s.port", dir)] = obj["properties"]["object.id"]
-			props[string.format("link.%s.node", dir)] = obj["properties"]["node.id"]
+			props[string.format("link.%s.port", dir)] = obj.properties["object.id"]
+			props[string.format("link.%s.node", dir)] = obj.properties["node.id"]
 		else
-			props[string.format("link.%s.node", dir)] = obj["properties"]["object.id"]
+			props[string.format("link.%s.node", dir)] = obj.properties["object.id"]
 		end
 	end
 	set_port_props("output", output)
