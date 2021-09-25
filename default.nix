@@ -13,7 +13,7 @@
     rockspecFilename = "amalg-scm-0.rockspec";
   };
   shell = mkShell {
-    nativeBuildInputs = [ lua lua-amalg ];
+    nativeBuildInputs = [ lua lua-amalg lua.pkgs.luacheck ];
   };
   wireplumber-scripts = callPackage ./derivation.nix (optionalAttrs (! pkgs ? lua-amalg) {
     inherit lua-amalg;
