@@ -87,7 +87,6 @@ local om = ObjectManager {
 om:connect("objects-changed", function (om)
 	Log.debug("interests changed")
 	for node in om:iterate() do
-		local is_output = output_interest:matches(node)
 		if watched[node["bound-id"]] == nil then
 			node:connect("ports-changed", function () link_nodes(om) end) -- WARN: om ref cycle?
 			watched[node["bound-id"]] = true

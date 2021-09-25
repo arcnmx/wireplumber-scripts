@@ -45,6 +45,9 @@ function Params.new()
 	end
 
 	function self:apply(node)
+		if next(self.changed_keys) == nil then
+			return
+		end
 		local pod = {
 			"Spa:Pod:Object:Param:Props", -- type_name = Spa:Pod:Object:Param:Props (262146)
 			self.pod.object_id, -- name_id = Spa:Enum:ParamId:Props (2)
