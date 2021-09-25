@@ -1,7 +1,4 @@
-local exports = { }
-
 local Params = { }
-exports.Params = Params
 
 function Params.new()
 	local self = {
@@ -88,4 +85,4 @@ function Params.new()
 	return self
 end
 
-return exports
+return Params

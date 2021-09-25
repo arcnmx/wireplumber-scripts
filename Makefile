@@ -1,10 +1,10 @@
 PREFIX := lib/require.lua
-export LUA_PATH := lib/?.lua;;
+export LUA_PATH := lib/?.lua;lib/?/init.lua;;
 AMALG := amalg.lua
 
 OUTPUTS := build/static-link.lua
 
-DEPENDS_static-link := wp params
+DEPENDS_static-link := wp.params wp.proxy wp.proxy.node util util.table
 
 all: $(OUTPUTS)
 
