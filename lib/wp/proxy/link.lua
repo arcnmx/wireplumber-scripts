@@ -19,7 +19,7 @@ function ProxyLink.new(output, input, args)
 		props["object.linger"] = args.linger
 	end
 
-	local set_port_props = function(dir, obj)
+	local function set_port_props(dir, obj)
 		if Proxy.is_type(Proxy.types.Port, obj) then
 			props[string.format("link.%s.port", dir)] = obj.properties["object.id"]
 			props[string.format("link.%s.node", dir)] = obj.properties["node.id"]
@@ -40,7 +40,7 @@ function ProxyLink.new(output, input, args)
 end
 
 function ProxyLink.activate(link, error_handler)
-	local callback = function (link, error_message)
+	local function callback(link, error_message)
 		if error_handler ~= nil and (error_message == nil or string.match(error_message, ": File exists") == nil) then
 			return error_handler(link, error_message)
 		end

@@ -30,7 +30,7 @@ t = require("util.table")
 local output_interest = Interest(t.merge({ type = "node" }, t.map(Constraint, config.output)))
 local input_interest = Interest(t.merge({ type = "node" }, t.map(Constraint, config.input)))
 
-local link_node = function(output, input)
+local function link_node(output, input)
 	Log.info(string.format("linking %s to %s", input.properties["node.name"], output.properties["node.name"]))
 
 	local links = { }
@@ -60,7 +60,7 @@ local link_node = function(output, input)
 			end
 		end
 	end
-	local callback = function (link, error_message)
+	local function callback(link, error_message)
 		if error_message ~= nil then
 			Log.warning(error_message)
 		end
@@ -70,7 +70,7 @@ local link_node = function(output, input)
 	end
 end
 
-local link_nodes = function(om)
+local function link_nodes(om)
 	for input in om:iterate(input_interest) do
 		for output in om:iterate(output_interest) do
 			link_node(output, input)

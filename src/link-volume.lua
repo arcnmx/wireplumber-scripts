@@ -37,7 +37,7 @@ t = require("util.table")
 local node_interest = Interest(t.merge({ type = "node" }, t.map(Constraint, config.node)))
 local follower_interest = Interest(t.merge({ type = "node" }, t.map(Constraint, config.follower)))
 
-local on_param_changed = function(node, follower_nodes, port_mappings)
+local function on_param_changed(node, follower_nodes, port_mappings)
 	local props = Proxy.Node.props(node)
 	local follower_props = { }
 	for _, pair in ipairs(port_mappings) do
