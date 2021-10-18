@@ -2,14 +2,10 @@
 package = {}
 local preload, loaded = {}, {
 	string = string,
-	debug = debug,
 	package = package,
-	_G = _G,
-	io = io,
 	os = os,
 	table = table,
 	math = math,
-	coroutine = coroutine,
 }
 package.preload, package.loaded = preload, loaded
 

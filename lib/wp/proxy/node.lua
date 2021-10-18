@@ -1,8 +1,12 @@
-local Proxy = require("wp.proxy")
 local ProxyNode = {
 	type = "WpNode",
 }
-Proxy.Node = ProxyNode
+local Proxy
+
+if package.preload["wp.proxy"] ~= nil then
+	Proxy = require("wp.proxy")
+	Proxy.Node = ProxyNode
+end
 
 function ProxyNode.wrap(node)
 	local self = {

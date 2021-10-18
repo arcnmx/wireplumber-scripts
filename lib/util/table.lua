@@ -1,6 +1,10 @@
-local util = require("util")
 local t = { }
-util.table = t
+local util
+
+if package.preload["util"] ~= nil then
+	util = require("util")
+	util.table = t
+end
 
 function t.map_to(f, dest, src)
 	for k, v in pairs(src) do

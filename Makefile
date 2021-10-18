@@ -1,11 +1,22 @@
-PREFIX := lib/require.lua
 export LUA_PATH := lib/?.lua;lib/?/init.lua;;
 AMALG := amalg.lua
+LUAC := luac
+MODULES := static-link link-volume
+INSTALLDIR ?= /usr/share/wireplumber
 
-OUTPUTS := build/static-link.lua build/link-volume.lua
+BUILD_DIR := build
+PREFIX := loader/require.lua
+AMALG_FLAGS := --no-argfix -p $(PREFIX)
 
-DEPENDS_static-link := wp.proxy wp.proxy.link util util.table
-DEPENDS_link-volume := wp.proxy wp.proxy.node wp.params util util.table
+OUTPUTS := $(foreach mod,$(MODULES),build/$(mod).lua)
+depsof = $(foreach dep,$(DEPENDS_$1),$(if $(DEPS_$(dep)),$(DEPS_$(dep)),$(dep)))
+luapath = $(wildcard lib/$(subst .,/,$(1)).lua lib/$(subst .,/,$(1))/init.lua)
+
+DEPS_wp.proxy := wp.proxy
+DEPS_wp.proxy.link := wp.proxy.link $(DEPS_wp.proxy)
+
+DEPENDS_static-link := wp.proxy wp.proxy.link util.table
+DEPENDS_link-volume := wp.proxy wp.proxy.node wp.params util.table
 
 all: $(OUTPUTS)
 
@@ -16,14 +27,19 @@ install: $(OUTPUTS)
 	install -Dm0644 -t $(INSTALLDIR)/scripts $^
 
 check: $(OUTPUTS)
-	luac -p $^
+	$(LUAC) -p $^
 
-build/.keep:
-	mkdir -p build
-	touch build/.keep
+$(BUILD_DIR)/.keep:
+	mkdir -p $(BUILD_DIR)
+	touch $(BUILD_DIR)/.keep
 
-build/%.lua: src/%.lua build/.keep
-	$(AMALG) -a -o $@ -p $(PREFIX) -s $< $(DEPENDS_$*)
+$(BUILD_DIR)/%.lua: src/%.lua $(BUILD_DIR)/.keep
+	$(AMALG) $(AMALG_FLAGS) -o $@ -s $< $(call depsof,$*)
 
-.PHONY: clean install check
+define modtemplate =
+$(BUILD_DIR)/$(1).lua: $(foreach dep,$(call depsof,$(1)),$(call luapath,$(dep)))
+endef
+$(foreach mod,$(MODULES),$(eval $(call modtemplate,$(mod))))
+
+.PHONY: all clean install check
 .DELETE_ON_ERROR:
