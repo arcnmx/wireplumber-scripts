@@ -23,6 +23,5 @@ local static_config = {
 			},
 		},
 	},
-	linkvolume = "output",
 }
-require("static-link", static_config)
+require("scripts.static-link")(static_config)
