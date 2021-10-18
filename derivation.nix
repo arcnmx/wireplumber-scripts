@@ -1,4 +1,4 @@
-{ stdenvNoCC, nix-gitignore, lua-amalg, lua5_4 ? lua5_3, lua5_3 ? lua, lua }: stdenvNoCC.mkDerivation {
+{ stdenvNoCC, nix-gitignore, lua-amalg, luacheck ? lua5_4.pkgs.luacheck, lua5_4 ? lua5_3, lua5_3 ? lua, lua }: stdenvNoCC.mkDerivation {
   pname = "wireplumber-scripts";
   version = "git";
 
@@ -8,7 +8,7 @@
   ''] ./.;
 
   nativeBuildInputs = [ lua-amalg ];
-  checkInputs = [ lua5_4 ];
+  checkInputs = [ lua5_4 luacheck ];
 
   installFlags = [ "INSTALLDIR=${placeholder "out"}" ];
   doCheck = true;

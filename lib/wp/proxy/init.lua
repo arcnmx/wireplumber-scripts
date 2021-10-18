@@ -18,6 +18,7 @@ local Proxy = {
 Proxy.WP_PIPEWIRE_OBJECT_FEATURES_MINIMAL = Proxy.WP_PROXY_FEATURE_BOUND + Proxy.WP_PIPEWIRE_OBJECT_FEATURE_INFO
 
 function Proxy.is_type(ty, obj)
+	-- luacheck: no unused
 	local name, version = obj:get_interface_type()
 	if type(ty) ~= "string" then
 		return name == ty.type

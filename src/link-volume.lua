@@ -38,7 +38,7 @@ local node_interest = Interest(t.merge({ type = "node" }, t.map(Constraint, conf
 local follower_interest = Interest(t.merge({ type = "node" }, t.map(Constraint, config.follower)))
 
 local on_param_changed = function(node, follower_nodes, port_mappings)
-	local props = Proxy.Node.props(leader_node)
+	local props = Proxy.Node.props(node)
 	local follower_props = { }
 	for _, pair in ipairs(port_mappings) do
 		for port_node in node:iterate_ports(pair.node) do

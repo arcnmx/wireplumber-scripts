@@ -1,5 +1,6 @@
 export LUA_PATH := lib/?.lua;lib/?/init.lua;;
 AMALG := amalg.lua
+LUACHECK := luacheck
 LUAC := luac
 MODULES := static-link link-volume
 INSTALLDIR ?= /usr/share/wireplumber
@@ -7,6 +8,8 @@ INSTALLDIR ?= /usr/share/wireplumber
 BUILD_DIR := build
 PREFIX := loader/require.lua
 AMALG_FLAGS := --no-argfix -p $(PREFIX)
+LUACHECKRC := .luacheckrc
+LUACHECK_FLAGS := --config $(LUACHECKRC)
 
 OUTPUTS := $(foreach mod,$(MODULES),build/$(mod).lua)
 depsof = $(foreach dep,$(DEPENDS_$1),$(if $(DEPS_$(dep)),$(DEPS_$(dep)),$(dep)))
@@ -28,6 +31,7 @@ install: $(OUTPUTS)
 
 check: $(OUTPUTS)
 	$(LUAC) -p $^
+	$(LUACHECK) $(LUACHECK_FLAGS) $^
 
 $(BUILD_DIR)/.keep:
 	mkdir -p $(BUILD_DIR)
