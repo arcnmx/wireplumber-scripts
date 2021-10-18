@@ -45,7 +45,7 @@ function ProxyLink.activate(link, error_handler)
 			return error_handler(link, error_message)
 		end
 	end
-	link:activate(Proxy.WP_PIPEWIRE_OBJECT_FEATURES_MINIMAL, callback)
+	link:activate(Features.PipewireObject.MINIMAL, callback)
 end
 
 return ProxyLink
