@@ -81,4 +81,8 @@ end)
 
 om:activate()
 
+return {
+	om,
+}
+
 end

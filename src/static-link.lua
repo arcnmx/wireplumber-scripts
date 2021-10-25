@@ -10,4 +10,5 @@ arguments should be a table consisting of:
 ]]--
 local config = ...
 
-return require("scripts.static-link")(config)
+-- luacheck: no global
+handle = require("scripts.static-link")(config)

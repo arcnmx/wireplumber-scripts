@@ -8,4 +8,5 @@ arguments should be a table consisting of:
 ]]--
 local config = ...
 
-return require("scripts.link-volume")(config)
+-- luacheck: no global
+handle = require("scripts.link-volume")(config)

@@ -84,7 +84,14 @@ om:connect("objects-changed", function (om)
 	end
 	link_nodes(om)
 end)
+om:connect("object-removed", function (om, node)
+	watched[node["bound-id"]] = nil
+end)
 
 om:activate()
+
+return {
+	om,
+}
 
 end
