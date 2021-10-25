@@ -6,6 +6,11 @@ end
 if config.follower == nil then
 	error("follower argument missing")
 end
+
+Proxy = require("wp.proxy")
+require("wp.proxy.node")
+t = require("util.table")
+
 local port_mappings = { }
 for _, pair in ipairs(config.mappings) do
 	table.insert(port_mappings, {
@@ -22,10 +27,6 @@ for _, pair in ipairs(config.mappings) do
 	})
 end
 
-Proxy = require("wp.proxy")
-require("wp.proxy.node")
-t = require("util.table")
-
 local node_interest = Interest(t.merge({ type = "node" }, t.map(Constraint, config.node)))
 local follower_interest = Interest(t.merge({ type = "node" }, t.map(Constraint, config.follower)))
 
@@ -40,11 +41,11 @@ local function on_param_changed(node, follower_nodes, port_mappings)
 					follower_props[fkey] = Proxy.Node.props(follower)
 				end
 				for port_follower in follower:iterate_ports(pair.follower) do
-					local mute, volume = props:mute(port_node_index), props:channelVolume(port_node_index)
+					local mute, volume = props:mute(port_node_index), props:channel_volume(port_node_index)
 					if mute then
 						volume = 0.0
 					end
-					follower_props[fkey]:setChannelVolume(port_node.properties["port.id"] + 1, volume)
+					follower_props[fkey]:set_channel_volume(port_follower.properties["port.id"] + 1, volume)
 				end
 			end
 		end

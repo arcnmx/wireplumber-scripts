@@ -1,9 +1,9 @@
 local Proxy = {
 	types = {
-		Port = "WpPort",
-		Node = "WpNode",
-		Client = "WpClient",
-		Metadata = "WpMetadata",
+		Port = "PipeWire:Interface:Port",
+		Node = "PipeWire:Interface:Node",
+		Client = "PipeWire:Interface:Client",
+		Metadata = "PipeWire:Interface:Metadata",
 	},
 }
 
