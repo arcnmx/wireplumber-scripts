@@ -17,8 +17,10 @@
   };
   wireplumber-scripts = callPackage ./derivation.nix (optionalAttrs (! pkgs ? lua-amalg) {
     inherit lua-amalg;
+  } // {
+    lua5_4 = lua;
     inherit (lua.pkgs) luacheck;
   });
-in {
+in wireplumber-scripts // {
   inherit lua-amalg wireplumber-scripts shell;
 }
