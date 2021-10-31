@@ -73,6 +73,12 @@ om:connect("object-added", function(om, node)
 	end
 end)
 
+om:connect("objects-changed", function(om)
+	for node in om:iterate(node_interest) do
+		on_param_changed(node, follower_nodes, port_mappings)
+	end
+end)
+
 om:connect("object-removed", function(om, node)
 	if follower_interest:matches(node) then
 		follower_nodes[node["bound-id"]] = nil
