@@ -2,6 +2,7 @@ local Proxy = {
 	types = {
 		Port = "PipeWire:Interface:Port",
 		Node = "PipeWire:Interface:Node",
+		Device = "PipeWire:Interface:Device",
 		Client = "PipeWire:Interface:Client",
 		Metadata = "PipeWire:Interface:Metadata",
 	},

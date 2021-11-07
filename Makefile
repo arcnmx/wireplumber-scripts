@@ -22,7 +22,7 @@ luapath = $(wildcard lib/$(subst .,/,$(1)).lua lib/$(subst .,/,$(1))/init.lua)
 
 DEPENDS_wp.proxy.link := wp.proxy
 DEPENDS_scripts.static-link := wp.proxy wp.proxy.link util.table
-DEPENDS_scripts.link-volume := wp.proxy wp.proxy.node wp.params util.table
+DEPENDS_scripts.link-volume := wp.proxy wp.proxy.node wp.proxy.device wp.params util.table
 
 DEPENDS_static-link := scripts.static-link
 DEPENDS_link-volume := scripts.link-volume
