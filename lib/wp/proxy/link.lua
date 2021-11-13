@@ -1,8 +1,16 @@
 local Proxy = require("wp.proxy")
 local ProxyLink = {
-	type = "WpLink",
+	type = "Link",
+	wp_type = "WpLink",
+	pw_type = "PipeWire:Interface:Link",
 }
-Proxy.Link = ProxyLink
+Proxy.register(ProxyLink)
+
+function ProxyLink._wrap(self)
+	function self:activate(error_handler)
+		return ProxyLink.activate(self.native, error_handler)
+	end
+end
 
 function ProxyLink.new(output, input, args)
 	if args == nil then
@@ -20,23 +28,19 @@ function ProxyLink.new(output, input, args)
 	end
 
 	local function set_port_props(dir, obj)
-		if Proxy.is_type(Proxy.types.Port, obj) then
-			props[string.format("link.%s.port", dir)] = obj.properties["object.id"]
-			props[string.format("link.%s.node", dir)] = obj.properties["node.id"]
+		local ProxyPort = require("wp.proxy.port")
+		local port = Proxy.wrap(obj)
+		if ProxyPort.is(port) then
+			props[string.format("link.%s.port", dir)] = port:object_id()
+			props[string.format("link.%s.node", dir)] = port:node_id()
 		else
-			props[string.format("link.%s.node", dir)] = obj.properties["object.id"]
+			props[string.format("link.%s.node", dir)] = port:object_id()
 		end
 	end
 	set_port_props("output", output)
 	set_port_props("input", input)
 
-	local self = {
-		link = Link(factory, props),
-	}
-	function self:activate(error_handler)
-		return ProxyLink.activate(self.link, error_handler)
-	end
-	return self
+	return ProxyLink.wrap(Link(factory, props))
 end
 
 function ProxyLink.activate(link, error_handler)

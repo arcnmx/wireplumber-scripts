@@ -1,30 +1,41 @@
+local Proxy = require("wp.proxy")
 local ProxyNode = {
-	type = "WpNode",
+	type = "Node",
+	wp_type = "WpNode",
+	pw_type = "PipeWire:Interface:Node",
 }
-local Proxy
+Proxy.register(ProxyNode)
 
-if package.preload["wp.proxy"] ~= nil then
-	Proxy = require("wp.proxy")
-	Proxy.Node = ProxyNode
-end
-
-function ProxyNode.wrap(node)
-	local self = {
-		node = node,
-	}
+function ProxyNode._wrap(self)
 	function self:props()
-		return ProxyNode.props(self.node)
+		return ProxyNode.props(self.native)
 	end
-	return self
+
+	function self:device_index()
+		return self:prop("card.profile.device")
+	end
+
+	function self:ports(interest)
+		local iter = self.native:iterate_ports(interest)
+		local Port = require("wp.port")
+		return function()
+			local node = iter()
+			if node ~= nil then
+				return Port.wrap(node)
+			else
+				return nil
+			end
+		end
+	end
 end
 
 function ProxyNode.props(node)
-	local params = require("wp.params").new()
+	local params = require("wp.props").new()
 
 	for param in node:iterate_params("Props") do
 		local pod = param:parse()
 		if pod.pod_type == "Object" and pod.properties.volume ~= nil then
-			params:set_from_pod(pod)
+			params:init_from_pod(pod)
 		end
 	end
 

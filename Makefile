@@ -20,9 +20,12 @@ resolvedeps = $(foreach dep,$(1),$(dep) $(if $(DEPENDS_$(dep)),$(call resolvedep
 depsof = $(call resolvedeps,$(DEPENDS_$1))
 luapath = $(wildcard lib/$(subst .,/,$(1)).lua lib/$(subst .,/,$(1))/init.lua)
 
+DEPENDS_wp.props := wp.params
+DEPENDS_wp.route := wp.params
 DEPENDS_wp.proxy.link := wp.proxy
+DEPENDS_wp.proxy.port := wp.proxy
 DEPENDS_scripts.static-link := wp.proxy wp.proxy.link util.table
-DEPENDS_scripts.link-volume := wp.proxy wp.proxy.node wp.proxy.device wp.params util.table
+DEPENDS_scripts.link-volume := wp.proxy wp.proxy.node wp.proxy.device wp.props wp.route util.table
 
 DEPENDS_static-link := scripts.static-link
 DEPENDS_link-volume := scripts.link-volume

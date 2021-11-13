@@ -1,24 +1,19 @@
+local Proxy = require("wp.proxy")
 local ProxyDevice = {
-	type = "WpDevice",
+	type = "Device",
+	wp_type = "WpDevice",
+	pw_type = "PipeWire:Interface:Device",
 }
-local Proxy
+Proxy.register(ProxyDevice)
 
-if package.preload["wp.proxy"] ~= nil then
-	Proxy = require("wp.proxy")
-	Proxy.Device = ProxyDevice
-end
-
-function ProxyDevice.wrap(device)
-	local self = {
-		device = device,
-	}
+function ProxyDevice._wrap(self)
 	function self:props()
-		return ProxyDevice.props(self.device)
+		return ProxyDevice.props(self.native)
 	end
+
 	function self:routes()
-		return ProxyDevice.routes(self.device)
+		return ProxyDevice.routes(self.native)
 	end
-	return self
 end
 
 function ProxyDevice.props(device)
@@ -35,9 +30,12 @@ function ProxyDevice.props(device)
 end
 
 function ProxyDevice.routes(device)
-	for param in device:iterate_params("Routes") do
-		error("aaaa")
+	local Route = require("wp.route")
+	local routes = Route.Routes.new()
+	for param in device:iterate_params("Route") do
+		routes:insert_route(Route.wrap(param))
 	end
+	return routes
 end
 
 return ProxyDevice

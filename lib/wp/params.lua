@@ -1,60 +1,62 @@
 local Params = { }
+Params.types = {
+	Props = "Spa:Pod:Object:Param:Props",
+	Route = "Spa:Pod:Object:Param:Route",
+}
 
-function Params.new()
+function Params.new(ty, id, props)
 	local self = {
-		changed_keys = { },
+		object_type = ty,
+		object_id = id,
+		pod_type = "Object",
+		properties = props,
+		changed_keys = nil,
 	}
 
-	function self:props()
-		return self.pod.properties
-	end
+	Params._wrap(self)
 
-	function self:mute(ch)
-		local props = self:props()
-		return props.mute or false
-	end
+	return self
+end
 
-	function self:channel_volume(ch)
-		local props = self:props()
-		if props.channelVolumes ~= nil then
-			return props.channelVolumes[ch]
-		else
-			return props.volume
-		end
-	end
+function Params.wrap(pod)
+	local pod = pod:parse()
+	local self = Params.new(nil, pod.object_id, pod.properties)
+	self.changed_keys = { }
+	self.pod = pod
+	return self
+end
 
-	function self:set_channel_volume(ch, volume)
-		local props = self:props()
-		if props.channelVolumes ~= nil then
-			props.channelVolumes[ch] = volume
-			self.changed_keys.channelVolumes = true
-		else
-			props.volume = volume
-			self.changed_keys.volume = true
-		end
-	end
-
-	function self:set_from_pod(pod)
-		self.pod = pod
+function Params._wrap(self)
+	function self:prop(key)
+		return self.properties[key]
 	end
 
 	function self:mark_dirty()
-		for key, _ in pairs(self.pod.properties) do
-			self.changed_keys[key] = true
+		self.changed_keys = nil
+	end
+
+	function self:type_id()
+		if self.object_type ~= nil then
+			return self.object_type
+		else
+			return Params.types[self.object_id]
 		end
 	end
 
-	function self:apply(node)
-		if next(self.changed_keys) == nil then
-			return
-		end
+	function self:to_pod()
 		local pod = {
-			"Spa:Pod:Object:Param:Props", -- type_name = Spa:Pod:Object:Param:Props (262146)
-			self.pod.object_id, -- name_id = Spa:Enum:ParamId:Props (2)
+			self:type_id(), -- type_name = Spa:Pod:Object:Param:Props (262146)
+			self.object_id, -- name_id = Spa:Enum:ParamId:Props (2)
 		}
-		for key, _ in pairs(self.changed_keys) do
+		local keys
+		if self.changed_keys == nil then
+			keys = pairs(self.properties)
+		else
+			keys = pairs(self.changed_keys)
+		end
+		for key, _ in keys do
 			Log.info(node, string.format("setting %s", key))
-			local value = self.pod.properties[key]
+			local value = self:prop(key)
 			if type(value) == "table" then
 				if value.pod_type == "Array" then
 					local value_type = value.value_type
@@ -80,12 +82,18 @@ function Params.new()
 				pod[key] = value
 			end
 		end
-		local newpod = Pod.Object(pod)
-		Log.debug(newpod, "setting props")
-		node:set_param("Props", Pod.Object(pod))
+
+		return pod
 	end
 
-	return self
+	function self:apply(target)
+		if next(self.changed_keys) == nil then
+			return
+		end
+		local pod = self:to_pod()
+		Log.debug(pod, "setting props")
+		target:set_param(self.pod.object_id, pod)
+	end
 end
 
 return Params
