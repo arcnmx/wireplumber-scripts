@@ -834,9 +834,9 @@ dependencies = [
 
 [[package]]
 name = "syn"
-version = "1.0.87"
+version = "1.0.88"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1e59d925cf59d8151f25a3bedf97c9c157597c9df7324d32d68991cc399ed08b"
+checksum = "ebd69e719f31e88618baa1eaa6ee2de5c9a1c004f1e9ecdb58e8352a13f20a01"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -1020,7 +1020,7 @@ checksum = "712e227841d057c1ee1cd2fb22fa7e5a5461ae8e48fa2ca79ec42cfc1931183f"
 [[package]]
 name = "wireplumber"
 version = "0.1.0"
-source = "git+https://github.com/arcnmx/wireplumber.rs#867eaa234f9046bb995ea4155ea9748d1a43f456"
+source = "git+https://github.com/arcnmx/wireplumber.rs#4e6bef7b3ea84de0f01bf8ee44808ad4b5b069ce"
 dependencies = [
  "bitflags",
  "futures-util",
@@ -1041,7 +1041,7 @@ dependencies = [
 [[package]]
 name = "wireplumber-sys"
 version = "0.1.0"
-source = "git+https://github.com/arcnmx/wireplumber.rs#867eaa234f9046bb995ea4155ea9748d1a43f456"
+source = "git+https://github.com/arcnmx/wireplumber.rs#4e6bef7b3ea84de0f01bf8ee44808ad4b5b069ce"
 dependencies = [
  "gio-sys",
  "glib-sys",
@@ -1053,7 +1053,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "wp-static-link"
+name = "wpscripts-static-link"
 version = "0.1.0"
 dependencies = [
  "anyhow",

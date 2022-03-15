@@ -13,6 +13,9 @@
     cd ${toString ./.}
     exec ${gir}/bin/gir -m not_bound
   '';
+  wpscripts = callPackage ./derivation.nix {
+    inherit (config.rustChannel) rustPlatform;
+  };
 in {
   config = {
     name = "wireplumber-scripts";
@@ -32,8 +35,8 @@ in {
     };
     tasks = {
       build.inputs = [
-        (cargo config "build" "build -p wp-static-link")
         (cargo config "test" "test --workspace")
+        wpscripts
       ];
     };
     jobs = {
@@ -55,13 +58,9 @@ in {
       type = types.unspecified;
       default = with pkgs; config.rustChannel.mkShell {
         rustTools = optional config.enableDev "rust-analyzer";
-        buildInputs = [ wireplumber pipewire glib ];
-        nativeBuildInputs = [ pkg-config ];
-        LIBCLANG_PATH = "${libclang.lib}/lib";
-        BINDGEN_EXTRA_CLANG_ARGS = [
-          "-I${stdenv.cc.cc}/lib/gcc/${stdenv.hostPlatform.config}/${stdenv.cc.cc.version}/include"
-          "-I${stdenv.cc.libc.dev}/include"
-        ];
+        inherit (wpscripts)
+          buildInputs nativeBuildInputs
+          LIBCLANG_PATH BINDGEN_EXTRA_CLANG_ARGS;
       };
     };
   };
