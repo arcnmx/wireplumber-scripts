@@ -1,9 +1,3 @@
-//! WirePlumber module example
-//!
-//! An example showing how to write a simple WirePlumber plugin module.
-//! Following along with the [source code](../src/static_link_module/static-link.rs.html) is recommended.
-//! Additional explanation and documentation is located in the [plugin module documentation](wireplumber::plugin).
-
 use std::collections::BTreeMap;
 use std::pin::Pin;
 use std::iter;
@@ -31,13 +25,11 @@ use wireplumber::{
 mod link_volume;
 use link_volume::LinkVolume;
 
-/// [GLib logging domain](glib::g_log) that doubles as the
-/// [plugin's name](glib::subclass::types::ObjectSubclass::NAME)
 const LOG_DOMAIN: &'static str = "static-link";
 
 /// A list of user-specified [Constraints](Constraint)
 /// used to find each end of the port to be linked.
-#[derive(Debug, Clone, Deserialize, Serialize, Variant)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct PortMapping {
 	/// A description of the output ports to link.
 	///
@@ -54,7 +46,7 @@ pub struct PortMapping {
 fn true_() -> bool { true }
 
 /// User configuration for the [StaticLink] plugin
-#[derive(Debug, Clone, Deserialize, Serialize, Variant)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 #[serde(rename_all = "kebab-case")]
 pub struct StaticLinkArgs {
 	/// The source node to link to `input`
@@ -80,26 +72,12 @@ pub struct StaticLinkArgs {
 	linger: bool,
 }
 
-impl Default for StaticLinkArgs {
-	fn default() -> Self {
-		Self {
-			output: Default::default(),
-			input: Default::default(),
-			port_mappings: Default::default(),
-			link_volume: Default::default(),
-			passive: true,
-			linger: true,
-		}
-	}
-}
-
 enum EventSignal {
 	ObjectsChanged,
 	PortsChanged(Node),
 	ParamsChanged(PipewireObject, String),
 }
 
-/// Link all ports between `output` and `input` matching [`mappings`][PortMapping]
 fn link_ports<'a>(mappings: &'a [PortMapping], core: &'a Core, output: &'a Node, input: &'a Node, link_props: &'a Properties) -> impl Iterator<Item=Result<Link, Error>> + 'a {
 	mappings.iter().flat_map(move |mapping| {
 		let port_input_interest: Interest<Port> = mapping.input.iter().chain(iter::once(
@@ -118,11 +96,6 @@ fn link_ports<'a>(mappings: &'a [PortMapping], core: &'a Core, output: &'a Node,
 	})
 }
 
-/// The main logic of the plugin
-///
-/// After all [interests](Interest) are [registered](main_async),
-/// this waits for events indicating that new nodes match the configured [`arg`](StaticLinkArgs)
-/// and decides how to link them together.
 async fn main_loop(
 	om: ObjectManager,
 	core: Core,
@@ -244,7 +217,6 @@ async fn main_loop(
 	}
 }
 
-/// The main entry point of the plugin
 pub async fn main_async(plugin: &SimplePluginObject<StaticLink>, core: Core, arg: StaticLinkArgs) -> Result<impl IntoIterator<Item=impl Future<Output=()>>, Error> {
 	let om = ObjectManager::new();
 
@@ -324,23 +296,12 @@ pub async fn main_async(plugin: &SimplePluginObject<StaticLink>, core: Core, arg
 	Ok([port_signals.boxed_local(), object_signals.boxed_local(), main_loop.boxed_local()])
 }
 
-/// The plugin instance
-///
-/// The instance struct contains any relevant mutable data,
-/// and is initialized by [SimplePlugin::init_args].
-/// It is also a shared ref-counted [GObject](glib::Object) instance
-/// via [`SimplePluginObject<Self>`](plugin::SimplePluginObject),
-/// so it must be accessed and manipulated via `&self`.
 #[derive(Default)]
 pub struct StaticLink {
-	/// Arguments specified by the user at plugin initialization
 	args: OnceCell<Vec<StaticLinkArgs>>,
-	/// Mutable data keeps track of any futures
-	/// that the plugin spawns on the [MainLoop](glib::MainLoop).
 	handles: SourceHandlesCell,
 }
 
-/// This makes [StaticLink] an async plugin that can be used with [plugin::plugin_export] below.
 impl AsyncPluginImpl for StaticLink {
 	type EnableFuture = Pin<Box<dyn Future<Output=Result<(), Error>>>>;
 
@@ -348,9 +309,6 @@ impl AsyncPluginImpl for StaticLink {
 		self.handles.push(source);
 	}
 
-	/// The real entry point of the plugin
-	///
-	/// Spawns as asynchronous [main_async] for each [StaticLinkArgs] supplied by the user.
 	fn enable(&self, this: Self::Type) -> Self::EnableFuture {
 		let core = this.plugin_core();
 		let context = this.plugin_context();
@@ -367,17 +325,11 @@ impl AsyncPluginImpl for StaticLink {
 		}.boxed_local()
 	}
 
-	/// Plugin deinitializer
-	///
-	/// Cleans up after itself by cancelling any pending futures
-	/// that were previously spawned by `enable`
 	fn disable(&self) {
-		// TODO: g_main_context here may be None if unwinding wtf!
 		self.handles.clear();
 	}
 }
 
-/// This makes [StaticLink] a plugin that can be used with [plugin::simple_plugin_subclass] below.
 impl SimplePlugin for StaticLink {
 	type Args = Vec<StaticLinkArgs>;
 
@@ -391,8 +343,6 @@ impl SimplePlugin for StaticLink {
 			.map_err(error::invalid_argument)
 	}
 }
-
-// macros take care of entry point boilerplate by impl'ing a bunch of traits for us
 
 plugin::simple_plugin_subclass! {
 	impl ObjectSubclass for LOG_DOMAIN as StaticLink { }

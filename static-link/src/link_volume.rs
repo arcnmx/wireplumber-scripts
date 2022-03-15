@@ -1,7 +1,4 @@
 use serde::{Serialize, Deserialize};
-use glib::{Variant, FromVariant};
-use glib::prelude::*;
-use std::convert::TryFrom;
 use anyhow::{Result, format_err};
 use wireplumber::{
 	pw::{Node, Port, PipewireObject},
@@ -12,8 +9,6 @@ use wireplumber::{
 use crate::LOG_DOMAIN;
 
 pub async fn link<I: IntoIterator<Item=(Port, Port)>>(node: &Node, follower: &Node, follower_target: &PipewireObject, route: Option<&SpaRoute>, mapping: I) -> Result<()> {
-	warning!(domain: LOG_DOMAIN, "TODO: follow {:?} with {:?}", node, follower);
-
 	let props = SpaProps::from_object(node).await?; // TODO: this can be cached and passed to this fn
 
 	let follower_props = if let Some(route) = route {
@@ -57,8 +52,8 @@ pub async fn link<I: IntoIterator<Item=(Port, Port)>>(node: &Node, follower: &No
 #[derive(Debug, Copy, Clone, Deserialize, Serialize)]
 #[serde(rename_all = "kebab-case")]
 pub enum LinkVolume {
-	Input = 1,
-	Output = 2,
+	Input,
+	Output,
 }
 
 impl LinkVolume {
@@ -74,36 +69,5 @@ impl LinkVolume {
 			LinkVolume::Input => LinkVolume::Output,
 			LinkVolume::Output => LinkVolume::Input,
 		}
-	}
-}
-
-impl TryFrom<u8> for LinkVolume {
-	type Error = ();
-
-	fn try_from(value: u8) -> Result<Self, Self::Error> {
-		Ok(match value {
-			1 => LinkVolume::Input,
-			2 => LinkVolume::Output,
-			_ => return Err(()),
-		})
-	}
-}
-
-impl StaticVariantType for LinkVolume {
-	fn static_variant_type() -> std::borrow::Cow<'static, glib::VariantTy> {
-		<u8 as StaticVariantType>::static_variant_type()
-	}
-}
-
-impl FromVariant for LinkVolume {
-	fn from_variant(variant: &Variant) -> Option<Self> {
-		// TODO: custom typecheck?
-		variant.get::<u8>().and_then(|v| LinkVolume::try_from(v).ok())
-	}
-}
-
-impl ToVariant for LinkVolume {
-	fn to_variant(&self) -> Variant {
-		(*self as u8).to_variant()
 	}
 }
