@@ -3,6 +3,7 @@
 , wireplumber, pipewire, glib
 , stdenv, libclang
 , pkg-config
+, buildType ? "release"
 , lib
 }: with lib; let
 in rustPlatform.buildRustPackage {
@@ -19,6 +20,7 @@ in rustPlatform.buildRustPackage {
   '' ] ./.;
   cargoSha256 = "0fiawcy4pfvwb1r8fx77h3wgzqzppls1c4l43a8kn1n7mqq2vxxd";
   #cargoLock = importToml ./Cargo.lock;
+  inherit buildType;
 
   pluginExt = stdenv.hostPlatform.extensions.sharedLibrary;
   wpLibDir = "${placeholder "out"}/lib/wireplumber-${versions.majorMinor wireplumber.version}";

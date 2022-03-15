@@ -15,6 +15,7 @@
   '';
   wpscripts = callPackage ./derivation.nix {
     inherit (config.rustChannel) rustPlatform;
+    buildType = "debug";
   };
 in {
   config = {
