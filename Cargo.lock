@@ -834,9 +834,9 @@ dependencies = [
 
 [[package]]
 name = "syn"
-version = "1.0.88"
+version = "1.0.89"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ebd69e719f31e88618baa1eaa6ee2de5c9a1c004f1e9ecdb58e8352a13f20a01"
+checksum = "ea297be220d52398dcc07ce15a209fce436d361735ac1db700cab3b6cdfb9f54"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -1020,7 +1020,7 @@ checksum = "712e227841d057c1ee1cd2fb22fa7e5a5461ae8e48fa2ca79ec42cfc1931183f"
 [[package]]
 name = "wireplumber"
 version = "0.1.0"
-source = "git+https://github.com/arcnmx/wireplumber.rs#4e6bef7b3ea84de0f01bf8ee44808ad4b5b069ce"
+source = "git+https://github.com/arcnmx/wireplumber.rs#1b4d5a036b01a9d13c985a9503dd9a45ee3a41da"
 dependencies = [
  "bitflags",
  "futures-util",
@@ -1041,7 +1041,7 @@ dependencies = [
 [[package]]
 name = "wireplumber-sys"
 version = "0.1.0"
-source = "git+https://github.com/arcnmx/wireplumber.rs#4e6bef7b3ea84de0f01bf8ee44808ad4b5b069ce"
+source = "git+https://github.com/arcnmx/wireplumber.rs#1b4d5a036b01a9d13c985a9503dd9a45ee3a41da"
 dependencies = [
  "gio-sys",
  "glib-sys",
