@@ -14,6 +14,7 @@ in rustPlatform.buildRustPackage {
   nativeBuildInputs = [ pkg-config ];
 
   src = nix-gitignore.gitignoreSourcePure [ ./.gitignore ''
+    /testing/
     /.github
     /.git
     *.nix
