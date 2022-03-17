@@ -47,7 +47,7 @@ fn true_() -> bool { true }
 
 /// User configuration for the [StaticLink] plugin
 #[derive(Debug, Clone, Deserialize, Serialize)]
-#[serde(rename_all = "kebab-case")]
+#[serde(rename_all = "snake_case")]
 pub struct StaticLinkArgs {
 	/// The source node to link to `input`
 	output: Vec<Constraint>,
