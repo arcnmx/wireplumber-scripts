@@ -1,0 +1,18 @@
+= WirePlumber Scripts
+
+A collection of useful plugins for WirePlumber, written in Rust with https://github.com/arcnmx/wireplumber.rs/[wireplumber.rs].
+
+== Components
+
+- https://github.com/arcnmx/wireplumber-scripts/wiki/Static-Link[static-link]:
+  Connects two nodes that match patterns specified by configuration, optionally synchronizing their volume levels together as well.
+
+== Installation
+
+Currently manual, but roughly:
+
+[source,bash]
+----
+cargo build --release &&
+cp ${CARGO_TARGET_DIR-target}/*/release/libwpscripts_*.so $DESTDIR/usr/lib/wireplumber-0.4/
+----
