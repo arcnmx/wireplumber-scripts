@@ -145,7 +145,7 @@ async fn main_loop(
 				}
 				let routes = match SpaRoutes::from_object(device).await {
 					Err(e) => {
-						warning!(domain: LOG_DOMAIN, "failed to get routes for {:?}", device);
+						warning!(domain: LOG_DOMAIN, "failed to get routes for {:?}: {:?}", device, e);
 						continue
 					},
 					Ok(routes) => routes,

@@ -1,22 +1,22 @@
 use serde::{Serialize, Deserialize};
-use anyhow::{Result, format_err};
+use glib::Error;
 use wireplumber::{
 	pw::{Node, Port, PipewireObject},
 	spa::{self, SpaProps, SpaRoute, SpaRoutes, SpaPodBuilder},
-	warning,
+	error, warning,
 };
 
 use crate::LOG_DOMAIN;
 
-pub async fn link<I: IntoIterator<Item=(Port, Port)>>(node: &Node, follower: &Node, follower_target: &PipewireObject, route: Option<&SpaRoute>, mapping: I) -> Result<()> {
+pub async fn link<I: IntoIterator<Item=(Port, Port)>>(node: &Node, follower: &Node, follower_target: &PipewireObject, route: Option<&SpaRoute>, mapping: I) -> Result<(), Error> {
 	let props = SpaProps::from_object(node).await?; // TODO: this can be cached and passed to this fn
 
 	let follower_props = if let Some(route) = route {
 		let route_index = route.index();
 		let routes = SpaRoutes::from_object(follower_target).await?;
 		let route = routes
-			.by_index(route_index).ok_or_else(|| format_err!("route index {} on {:?} not found", route_index, routes))?;
-		route.props().ok_or_else(|| format_err!("expected props on route {:?}", route))?
+			.by_index(route_index).ok_or_else(|| error::operation_failed(format_args!("route index {} on {:?} not found", route_index, routes)))?;
+		route.props().ok_or_else(|| error::operation_failed(format_args!("expected props on route {:?}", route)))?
 	} else {
 		SpaProps::from_object(follower_target).await?
 	};

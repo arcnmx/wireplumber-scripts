@@ -19,7 +19,7 @@ in rustPlatform.buildRustPackage {
     /.git
     *.nix
   '' ] ./.;
-  cargoSha256 = "0ffzqkz7b09kwjs4yyiyxwvmdknharxhq8x7zmp8jp0b3gsgnr8c";
+  cargoSha256 = "1hb5y4wk9is6wiflqn1jljbrz11xpb2j9mn9afl1ajhdfiv35jj7";
   #cargoLock = importToml ./Cargo.lock;
   inherit buildType;
 
