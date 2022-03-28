@@ -6,6 +6,8 @@ A collection of useful plugins for WirePlumber, written in Rust with https://git
 
 - https://github.com/arcnmx/wireplumber-scripts/wiki/Static-Link[static-link]:
   Connects two nodes that match patterns specified by configuration, optionally synchronizing their volume levels together as well.
+- https://github.com/arcnmx/wireplumber-scripts/wiki/Json-Config[json-config]:
+  Provides a `config/json` loader as a replacement for `config/lua`.
 
 == Installation
 

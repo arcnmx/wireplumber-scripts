@@ -19,7 +19,7 @@ in rustPlatform.buildRustPackage {
     /.git
     *.nix
   '' ] ./.;
-  cargoSha256 = "1hb5y4wk9is6wiflqn1jljbrz11xpb2j9mn9afl1ajhdfiv35jj7";
+  cargoSha256 = "09483mbydb2qwdn9acsr4km8lnly9l4v1dkf9v2z64i9145sd5pn";
   #cargoLock = importToml ./Cargo.lock;
   inherit buildType;
 
@@ -27,7 +27,7 @@ in rustPlatform.buildRustPackage {
   wpLibDir = "${placeholder "out"}/lib/wireplumber-${versions.majorMinor wireplumber.version}";
   postInstall = ''
     install -d $wpLibDir
-    for pluginName in wpscripts_static_link; do
+    for pluginName in wpscripts_static_link wpscripts_json_config; do
       mv $out/lib/lib$pluginName$pluginExt $wpLibDir/
     done
   '';

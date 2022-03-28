@@ -1,2 +1,2 @@
 [workspace]
-members = ["static-link"]
+members = ["static-link", "json-config"]
