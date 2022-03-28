@@ -17,6 +17,7 @@ use wireplumber::{
 	core::{Core, Object, ObjectFeatures},
 	plugin::{self, AsyncPluginImpl, SimplePlugin, SimplePluginObject, SourceHandlesCell},
 	registry::{ConstraintType, Constraint, Interest, ObjectManager},
+	lua::from_variant,
 	pw::{self, Device, Node, Port, Link, Properties, PipewireObject},
 	spa::SpaRoutes,
 	error, info, warning,
@@ -338,16 +339,9 @@ impl SimplePlugin for StaticLink {
 	}
 
 	fn decode_args(args: Option<Variant>) -> Result<Self::Args, Error> {
-		#[derive(Deserialize)]
-		struct JsonHack {
-			json: String,
-		}
-		args.map(|args| match glib_serde::from_variant::<JsonHack>(&args) {
-			Ok(json) => serde_json::from_str(&json.json)
-				.map_err(error::invalid_argument),
-			Err(_) => glib_serde::from_variant(&args)
-				.map_err(error::invalid_argument),
-		}).unwrap_or(Ok(Default::default()))
+		args.map(|args|
+			from_variant(&args).map_err(error::invalid_argument)
+		).unwrap_or(Ok(Default::default()))
 	}
 }
 
