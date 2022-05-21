@@ -5,20 +5,20 @@
 , pkg-config
 , buildType ? "release"
 , lib
-}: with lib; let
-in rustPlatform.buildRustPackage {
+, _arg'wireplumber-scripts-arc ? nix-gitignore.gitignoreSourcePure [ ./.gitignore ''
+  /testing/
+  /.github
+  /.git
+  *.nix
+'' ] ./.
+}: with lib; rustPlatform.buildRustPackage {
   pname = "wireplumber-scripts-arc";
   version = "0.1.0";
 
   buildInputs = [ wireplumber pipewire glib ];
   nativeBuildInputs = [ pkg-config ];
 
-  src = nix-gitignore.gitignoreSourcePure [ ./.gitignore ''
-    /testing/
-    /.github
-    /.git
-    *.nix
-  '' ] ./.;
+  src = _arg'wireplumber-scripts-arc;
   cargoSha256 = "09483mbydb2qwdn9acsr4km8lnly9l4v1dkf9v2z64i9145sd5pn";
   #cargoLock = importToml ./Cargo.lock;
   inherit buildType;
@@ -38,4 +38,9 @@ in rustPlatform.buildRustPackage {
     "-I${stdenv.cc.cc}/lib/gcc/${stdenv.hostPlatform.config}/${stdenv.cc.cc.version}/include"
     "-I${stdenv.cc.libc.dev}/include"
   ];
+
+  meta = {
+    inherit (wireplumber.meta) platforms;
+    broken = versionOlder rustPlatform.rust.rustc.version "1.57";
+  };
 }
