@@ -66,6 +66,13 @@
       wpscripts = { wireplumber-scripts-arc }: wireplumber-scripts-arc.override {
         buildType = "debug";
       };
+      rustfmt = { rust'builders, wireplumber-scripts-arc }: rust'builders.check-rustfmt-unstable {
+        inherit (wireplumber-scripts-arc) src;
+        config = ./.rustfmt.toml;
+        cargoFmtArgs = with nixlib; concatLists (
+          mapAttrsToList (_: c: [ "-p" c.package.name ]) self.lib.crate.members
+        );
+      };
     };
     lib = with nixlib; {
       crate = rust.lib.importCargo {

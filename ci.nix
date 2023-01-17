@@ -13,6 +13,7 @@ in {
     };
     tasks = {
       build.inputs = singleton checks.wpscripts;
+      fmt.inputs = singleton checks.rustfmt;
     };
   };
 }

@@ -1,22 +1,33 @@
-use serde::{Serialize, Deserialize};
-use glib::Error;
-use wireplumber::{
-	pw::{Node, Port, PipewireObject},
-	spa::{self, SpaProps, SpaRoute, SpaRoutes, SpaPodBuilder},
-	error, warning,
+use {
+	crate::LOG_DOMAIN,
+	glib::Error,
+	serde::{Deserialize, Serialize},
+	wireplumber::{
+		error,
+		pw::{Node, PipewireObject, Port},
+		spa::{self, SpaPodBuilder, SpaProps, SpaRoute, SpaRoutes},
+		warning,
+	},
 };
 
-use crate::LOG_DOMAIN;
-
-pub async fn link<I: IntoIterator<Item=(Port, Port)>>(node: &Node, follower: &Node, follower_target: &PipewireObject, route: Option<&SpaRoute>, mapping: I) -> Result<(), Error> {
+pub async fn link<I: IntoIterator<Item = (Port, Port)>>(
+	node: &Node,
+	follower: &Node,
+	follower_target: &PipewireObject,
+	route: Option<&SpaRoute>,
+	mapping: I,
+) -> Result<(), Error> {
 	let props = SpaProps::from_object(node).await?; // TODO: this can be cached and passed to this fn
 
 	let follower_props = if let Some(route) = route {
 		let route_index = route.index();
 		let routes = SpaRoutes::from_object(follower_target).await?;
 		let route = routes
-			.by_index(route_index).ok_or_else(|| error::operation_failed(format_args!("route index {} on {:?} not found", route_index, routes)))?;
-		route.props().ok_or_else(|| error::operation_failed(format_args!("expected props on route {:?}", route)))?
+			.by_index(route_index)
+			.ok_or_else(|| error::operation_failed(format_args!("route index {route_index} on {routes:?} not found")))?;
+		route
+			.props()
+			.ok_or_else(|| error::operation_failed(format_args!("expected props on route {route:?}")))?
 	} else {
 		SpaProps::from_object(follower_target).await?
 	};
@@ -26,7 +37,11 @@ pub async fn link<I: IntoIterator<Item=(Port, Port)>>(node: &Node, follower: &No
 
 		let volume = if mute { 0.0f32 } else { volume }; // TODO: if mappings cover all follower ports, you could mute the follower instead!
 		if let Err(_) = follower_props.set_channel_volume(follower_port.port_index()?, volume) {
-			warning!(domain: LOG_DOMAIN, "failed to set channel {} volume on {:?}", follower_port.port_index()?, follower);
+			warning!(
+				domain: LOG_DOMAIN,
+				"failed to set channel {} volume on {follower:?}",
+				follower_port.port_index()?,
+			);
 		}
 		// TODO: set the relevant softVolumes to 1.0? it's unclear how exactly this works...
 	}
@@ -35,10 +50,17 @@ pub async fn link<I: IntoIterator<Item=(Port, Port)>>(node: &Node, follower: &No
 		let new = SpaPodBuilder::new_object("Spa:Pod:Object:Param:Route", "Route");
 
 		new.add_object_property(&spa::ffi::spa_param_route_SPA_PARAM_ROUTE_index, route.index() as i32);
-		new.add_object_property(&spa::ffi::spa_param_route_SPA_PARAM_ROUTE_device, route.device_index() as i32);
+		new.add_object_property(
+			&spa::ffi::spa_param_route_SPA_PARAM_ROUTE_device,
+			route.device_index() as i32,
+		);
 		new.add_object_property(&spa::ffi::spa_param_route_SPA_PARAM_ROUTE_save, true);
-		// TODO: recreate `follower_props` with object_id="Route" if necessary? (it might already be due to coming from route?)
-		new.add_object_property(&spa::ffi::spa_param_route_SPA_PARAM_ROUTE_props, follower_props.into_params());
+		// TODO: recreate `follower_props` with object_id="Route" if necessary?
+		// (it might already be due to coming from route?)
+		new.add_object_property(
+			&spa::ffi::spa_param_route_SPA_PARAM_ROUTE_props,
+			follower_props.into_params(),
+		);
 
 		new.end().unwrap().apply(follower_target)?;
 	} else {
