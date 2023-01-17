@@ -1,33 +1,32 @@
-{ rustPlatform
-, nix-gitignore
-, wireplumber, pipewire, glib
+let
+  self = import ./. { pkgs = null; system = null; };
+in {
+  rustPlatform
+, wireplumber, pipewire, glib, pkg-config
 , stdenv, libclang
-, pkg-config
-, buildType ? "release"
 , lib
-, _arg'wireplumber-scripts-arc ? nix-gitignore.gitignoreSourcePure [ ./.gitignore ''
-  /testing/
-  /.github
-  /.git
-  *.nix
-'' ] ./.
+, buildType ? "release"
+, cargoLock ? crate.cargoLock
+, source ? crate.src
+, crate ? self.lib.crate
+, scriptNames ? lib.attrNames crate.members
 }: with lib; rustPlatform.buildRustPackage {
-  pname = "wireplumber-scripts-arc";
-  version = "0.1.0";
+  pname = crate.name;
+  inherit (crate) version;
 
   buildInputs = [ wireplumber pipewire glib ];
   nativeBuildInputs = [ pkg-config ];
 
-  src = _arg'wireplumber-scripts-arc;
-  cargoSha256 = "09483mbydb2qwdn9acsr4km8lnly9l4v1dkf9v2z64i9145sd5pn";
-  #cargoLock = importToml ./Cargo.lock;
-  inherit buildType;
+  src = source;
+  inherit cargoLock buildType;
+  doCheck = buildType != "release";
 
+  pluginNames = mapAttrsToList (_: c: c.package.name) (getAttrs scriptNames crate.members);
   pluginExt = stdenv.hostPlatform.extensions.sharedLibrary;
   wpLibDir = "${placeholder "out"}/lib/wireplumber-${versions.majorMinor wireplumber.version}";
   postInstall = ''
     install -d $wpLibDir
-    for pluginName in wpscripts_static_link wpscripts_json_config; do
+    for pluginName in ''${pluginNames//-/_}; do
       mv $out/lib/lib$pluginName$pluginExt $wpLibDir/
     done
   '';
@@ -37,9 +36,14 @@
   BINDGEN_EXTRA_CLANG_ARGS = [
     "-I${stdenv.cc.cc}/lib/gcc/${stdenv.hostPlatform.config}/${stdenv.cc.cc.version}/include"
     "-I${stdenv.cc.libc.dev}/include"
+    "-DPW_ENABLE_DEPRECATED=1" # https://gitlab.freedesktop.org/pipewire/pipewire-rs/-/issues/55
   ];
 
   meta = {
+    description = "useful plugins for WirePlumber";
+    homepage = "https://github.com/arcnmx/wireplumber-scripts";
+    license = licenses.mit;
+    maintainers = [ maintainers.arcnmx ];
     inherit (wireplumber.meta) platforms;
     broken = versionOlder rustPlatform.rust.rustc.version "1.57";
   };
