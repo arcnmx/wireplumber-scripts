@@ -4,6 +4,12 @@ version = "0.1.0"
 authors = ["arcnmx"]
 edition = "2018"
 
+include = [
+	"/src/**",
+	"/README*",
+	"../COPYING*",
+]
+
 [lib]
 crate-type = ["cdylib"]
 
