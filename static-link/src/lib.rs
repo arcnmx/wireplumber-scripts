@@ -104,7 +104,7 @@ fn link_ports<'a>(
 				true,
 			)))
 			.collect();
-		let port_outputs = move || port_output_interest.filter(output);
+		let port_outputs = move || port_output_interest.clone().filter(output);
 
 		port_inputs.flat_map(move |i| port_outputs().map(move |o| Link::new(&core, &o, &i, link_props)))
 	})
@@ -125,8 +125,8 @@ async fn main_loop(
 	while let Some(event) = rx.next().await {
 		match event {
 			EventSignal::ObjectsChanged | EventSignal::PortsChanged(..) => {
-				let inputs = input_interest.filter(&om);
-				let outputs = || output_interest.filter(&om);
+				let inputs = input_interest.clone().filter(&om);
+				let outputs = || output_interest.clone().filter(&om);
 				let pairs = inputs.flat_map(|i| outputs().map(move |o| (i.clone(), o)));
 
 				// TODO: if link_volume is set, trigger a refresh here
@@ -176,7 +176,7 @@ async fn main_loop(
 						None => continue,
 					};
 					let follower_interest = link_volume.invert().select(&input_interest, &output_interest);
-					let follower = match follower_interest.lookup(&om) {
+					let follower = match follower_interest.clone().lookup(&om) {
 						Some(follower) => follower,
 						None => {
 							warning!(domain: LOG_DOMAIN, "could not find node to follow {}", node);
@@ -236,9 +236,9 @@ async fn main_loop(
 							.select(port_input_interest.clone(), port_output_interest.clone());
 						let node_interest = link_volume.select(&port_input_interest, &port_output_interest);
 
-						let ports_node = node_interest.filter(node);
+						let ports_node = node_interest.clone().filter(node);
 						let follower = &follower;
-						let ports_follower = move || follower_interest.filter(follower);
+						let ports_follower = move || follower_interest.clone().filter(follower);
 						ports_node.flat_map(move |i| ports_follower().map(move |o| (i.clone(), o)))
 					});
 
@@ -265,13 +265,13 @@ pub async fn main_async(
 	let om = ObjectManager::new();
 
 	let output_interest: Interest<Node> = arg.output.iter().collect();
-	om.add_interest_full(&output_interest);
+	om.add_interest(output_interest.clone());
 
 	let input_interest: Interest<Node> = arg.input.iter().collect();
-	om.add_interest_full(&input_interest);
+	om.add_interest(input_interest.clone());
 
 	let device_interest = Interest::<Device>::new();
-	om.add_interest_full(&device_interest);
+	om.add_interest(device_interest);
 
 	let device_routes = Rc::new(RefCell::new(BTreeMap::new()));
 

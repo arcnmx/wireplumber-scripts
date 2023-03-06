@@ -49,18 +49,12 @@ pub async fn link<I: IntoIterator<Item = (Port, Port)>>(
 	if let Some(route) = route {
 		let new = SpaPodBuilder::new_object("Spa:Pod:Object:Param:Route", "Route");
 
-		new.add_object_property(&spa::ffi::spa_param_route_SPA_PARAM_ROUTE_index, route.index() as i32);
-		new.add_object_property(
-			&spa::ffi::spa_param_route_SPA_PARAM_ROUTE_device,
-			route.device_index() as i32,
-		);
-		new.add_object_property(&spa::ffi::spa_param_route_SPA_PARAM_ROUTE_save, true);
+		new.add_object_property(&spa::ffi::SPA_PARAM_ROUTE_index, route.index() as i32);
+		new.add_object_property(&spa::ffi::SPA_PARAM_ROUTE_device, route.device_index() as i32);
+		new.add_object_property(&spa::ffi::SPA_PARAM_ROUTE_save, true);
 		// TODO: recreate `follower_props` with object_id="Route" if necessary?
 		// (it might already be due to coming from route?)
-		new.add_object_property(
-			&spa::ffi::spa_param_route_SPA_PARAM_ROUTE_props,
-			follower_props.into_params(),
-		);
+		new.add_object_property(&spa::ffi::SPA_PARAM_ROUTE_props, follower_props.into_params());
 
 		new.end().unwrap().apply(follower_target)?;
 	} else {

@@ -16,5 +16,5 @@ crate-type = ["cdylib"]
 [dependencies]
 futures = "0.3"
 wireplumber = { version = "0.1", features = ["futures", "glib-signal", "libspa", "serde", "experimental", "v0_4_3"], git = "https://github.com/arcnmx/wireplumber.rs" }
-glib = "0.16"
+glib = "0.17"
 serde = { version = "1.0", features = ["derive"] }
