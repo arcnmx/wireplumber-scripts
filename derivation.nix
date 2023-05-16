@@ -44,6 +44,5 @@ in {
     license = licenses.mit;
     maintainers = [ maintainers.arcnmx ];
     inherit (wireplumber.meta) platforms;
-    broken = versionOlder rustPlatform.rust.rustc.version "1.57";
   };
 }
