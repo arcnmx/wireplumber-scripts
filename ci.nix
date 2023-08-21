@@ -1,5 +1,5 @@
 { config, pkgs, lib, ... }: with pkgs; with lib; let
-  inherit (import ./. { }) checks;
+  inherit (import ./. { pkgs = null; }) checks;
 in {
   config = {
     name = "wireplumber-scripts";
