@@ -50,7 +50,7 @@
       };
       default = { wireplumber-scripts-arc }: wireplumber-scripts-arc;
     };
-    legacyPackages = { callPackageSet }: callPackageSet {
+    legacyPackages = {
       source = { rust'builders }: rust'builders.wrapSource self.lib.crate.src;
 
       generate = { rust'builders, outputHashes }: rust'builders.generateFiles {
@@ -61,7 +61,7 @@
       outputHashes = { rust'builders }: rust'builders.cargoOutputHashes {
         inherit (self.lib) crate;
       };
-    } { };
+    };
     checks = {
       wpscripts = { wireplumber-scripts-arc }: wireplumber-scripts-arc.override {
         buildType = "debug";
