@@ -1,6 +1,6 @@
 {
   outputHashes = {
-    "wireplumber-0.1.0" = "sha256-JmCFTCuMgPcGgnqihh4SjvQN4p608TViv21Tz3S6IX8=";
-    "wireplumber-sys-0.1.0" = "sha256-JmCFTCuMgPcGgnqihh4SjvQN4p608TViv21Tz3S6IX8=";
+    "wireplumber-0.1.0" = "sha256-TtdPyQipK0XV/aYE80e0aX1e3v7Z0YUm9CaNT4BpQIk=";
+    "wireplumber-sys-0.1.0" = "sha256-TtdPyQipK0XV/aYE80e0aX1e3v7Z0YUm9CaNT4BpQIk=";
   };
 }

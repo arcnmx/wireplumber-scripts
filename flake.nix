@@ -25,7 +25,7 @@
         nativeBuildInputs = wireplumber-scripts-arc.nativeBuildInputs
           ++ nixlib.optional enableRust cargo
           ++ [
-            (writeShellScriptBin "generate" ''nix run .#generate "$@"'')
+            (writeShellScriptBin "generate" ''nix run .#generate ''${FLAKE_OPTS-} "$@"'')
           ];
         inherit (wireplumber-scripts-arc) buildInputs LIBCLANG_PATH BINDGEN_EXTRA_CLANG_ARGS;
         RUST_LOG = "wireplumber=debug";
