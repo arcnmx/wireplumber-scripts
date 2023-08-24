@@ -348,13 +348,11 @@ pub async fn main_async(
 		.forward(link_nodes_signal)
 		.map(drop);
 
-	let signal_installed = om.signal_stream(ObjectManager::SIGNAL_INSTALLED);
-
 	om.request_object_features(Object::static_type(), ObjectFeatures::ALL);
 	core.install_object_manager(&om);
 
 	// NOTE: waiting for `installed` really isn't necessary since the loop waits for a signal anyway...
-	signal_installed.once().await?;
+	om.installed_future().await?;
 
 	let main_loop = main_loop(om, core, arg, input_interest, output_interest, device_routes, rx);
 
